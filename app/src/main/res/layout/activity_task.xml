@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffe896"
+    android:background="#FBE29B"
     tools:context=".TaskActivity">
 
     <EditText
@@ -36,7 +36,8 @@
         android:layout_marginRight="10dp"
         android:ems="10"
         android:hint="Date"
-        android:inputType="date"
+        android:focusable="false"
+        android:longClickable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
