@@ -88,7 +88,8 @@ public class TaskActivity extends AppCompatActivity {
                         MainActivity.tasks.get(taskPos).setDesc(description);
                     }
 
-                    MainActivity.arrayAdapter.notifyDataSetChanged();
+//                    MainActivity.arrayAdapter.notifyDataSetChanged();
+                    MainActivity.taskAdapter.notifyDataSetChanged();
 
                     Toast.makeText(TaskActivity.this, "Task Saved", Toast.LENGTH_SHORT).show();
 

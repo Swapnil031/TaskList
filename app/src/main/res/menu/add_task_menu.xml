@@ -6,4 +6,7 @@
     <item
         android:id="@+id/clear_tasks"
         android:title="Delete All"></item>
+    <item
+        android:id="@+id/send_notification"
+        android:title="Send Notif"></item>
 </menu>

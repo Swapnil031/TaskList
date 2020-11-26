@@ -3,7 +3,11 @@ package com.example.swapnilaudichya.tasklist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,12 +24,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.example.swapnilaudichya.tasklist.App.CHANNEL;
+
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     static ArrayList<Task> tasks = new ArrayList<>();
-    static ArrayAdapter arrayAdapter;
+//    static ArrayAdapter arrayAdapter;
+    static TaskAdapter taskAdapter;
     static SQLiteDatabase db;
+
+    private NotificationManagerCompat notificationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +43,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listView = findViewById(R.id.listView);
-        arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, tasks);
-        listView.setAdapter(arrayAdapter);
+//        arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, tasks);
+        taskAdapter = new TaskAdapter(this,R.layout.list_view_items,tasks);
+//        listView.setAdapter(arrayAdapter);
+        listView.setAdapter(taskAdapter);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
 
         /***************** SQLite Database code *****************/
@@ -74,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
                                 int taskId = tasks.get(position).getId();
                                 db.execSQL("DELETE FROM tasks WHERE id = ?", new String[] {String.valueOf(taskId)});
                                 tasks.remove(position);
-                                arrayAdapter.notifyDataSetChanged();
+//                                arrayAdapter.notifyDataSetChanged();
+                                taskAdapter.notifyDataSetChanged();
                                 Toast.makeText(MainActivity.this, "Task Deleted", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -109,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
         }
         c.close();
 
-        arrayAdapter.notifyDataSetChanged();
+//        arrayAdapter.notifyDataSetChanged();
+        taskAdapter.notifyDataSetChanged();
     }
 
 
@@ -143,13 +159,31 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             db.execSQL("DELETE FROM tasks");
                             tasks.clear();
-                            arrayAdapter.notifyDataSetChanged();
+                            taskAdapter.notifyDataSetChanged();
                         }
                     })
                     .setNegativeButton("No", null)
                     .show();
 
             return true;
+        }
+
+        if(item.getItemId() == R.id.send_notification){
+
+            Intent intent = new Intent(this, TaskActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent, 0);
+
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL)
+                    .setSmallIcon(R.drawable.ic_assignment_turned_in_black_24dp)
+                    .setContentTitle("Pending Task")
+                    .setContentText("You have a pending task")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .build();
+
+            notificationManager.notify(1, notification);
         }
 
         return false;
